@@ -4,7 +4,7 @@ const https = require('https');
 
 const DOMAIN = 'https://sparkflare95.github.io/ZeroDowntime';
 const HOST = 'sparkflare95.github.io';
-const INDEXNOW_KEY = 'indexnowkey12345'; // Change this to match the exact text inside your indexnowapi.txt file
+const INDEXNOW_KEY = 'indexnowkey12345'; // Apni indexnowapi.txt file ke andar jo text rakha hai woh yahan daal dein
 const KEY_FILENAME = 'indexnowapi.txt';
 
 const destFile = path.join(__dirname, 'destinations.txt');
@@ -82,7 +82,12 @@ sitemapXML += `</urlset>`;
 fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXML, 'utf8');
 console.log(`Successfully generated sitemap.xml`);
 
-// 3. Send IndexNow API Request
+// 3. Generate robots.txt automatically
+const robotsTxtContent = `User-agent: *\nAllow: /\n\nSitemap: ${DOMAIN}/sitemap.xml\n`;
+fs.writeFileSync(path.join(__dirname, 'robots.txt'), robotsTxtContent, 'utf8');
+console.log(`Successfully generated robots.txt`);
+
+// 4. Send IndexNow API Request
 const payload = JSON.stringify({
     host: HOST,
     key: INDEXNOW_KEY,
