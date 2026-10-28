@@ -1,8 +1,14 @@
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 
 const DOMAIN = 'https://sparkflare95.github.io/ZeroDowntime';
+const HOST = 'sparkflare95.github.io';
+const INDEXNOW_KEY = 'indexnowkey12345'; // Change this to match the exact text inside your indexnowapi.txt file
+const KEY_FILENAME = 'indexnowapi.txt';
+
 const destFile = path.join(__dirname, 'destinations.txt');
+const urlsOutputFile = path.join(__dirname, 'urls.txt');
 
 function generateRandomString(length = 9) {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -56,6 +62,11 @@ destinations.forEach(targetUrl => {
     generatedUrls.push(fullPageUrl);
 });
 
+// 1. Save generated URLs to urls.txt
+fs.writeFileSync(urlsOutputFile, generatedUrls.join('\n'), 'utf8');
+console.log(`Saved ${generatedUrls.length} URLs to urls.txt`);
+
+// 2. Generate sitemap.xml
 let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
 sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
@@ -69,4 +80,37 @@ generatedUrls.forEach(url => {
 sitemapXML += `</urlset>`;
 
 fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXML, 'utf8');
-console.log(`Successfully generated ${generatedUrls.length} redirect pages and sitemap.xml`);
+console.log(`Successfully generated sitemap.xml`);
+
+// 3. Send IndexNow API Request
+const payload = JSON.stringify({
+    host: HOST,
+    key: INDEXNOW_KEY,
+    keyLocation: `${DOMAIN}/${KEY_FILENAME}`,
+    urlList: generatedUrls
+});
+
+const options = {
+    hostname: 'api.indexnow.org',
+    port: 443,
+    path: '/indexnow',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+    }
+};
+
+const req = https.request(options, (res) => {
+    console.log(`IndexNow statusCode: ${res.statusCode}`);
+    res.on('data', (d) => {
+        process.stdout.write(d);
+    });
+});
+
+req.on('error', (error) => {
+    console.error('IndexNow Error:', error);
+});
+
+req.write(payload);
+req.end();
