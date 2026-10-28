@@ -4,7 +4,7 @@ const https = require('https');
 
 const DOMAIN = 'https://redirects.pageaura.xyz';
 const HOST = 'redirects.pageaura.xyz';
-const INDEXNOW_KEY = 'indexnowkey12345'; // Apni indexnowapi.txt file ke andar wali key yahan rakhein
+const INDEXNOW_KEY = '2a6bdd132d7d4b15bb864c893cca90b1'; // 
 const KEY_FILENAME = 'indexnowapi.txt';
 
 const destFile = path.join(__dirname, 'destinations.txt');
