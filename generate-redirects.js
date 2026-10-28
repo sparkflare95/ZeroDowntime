@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const DOMAIN = 'https://sparkflare95.github.io/ZeroDowntime';
-const HOST = 'sparkflare95.github.io';
-const INDEXNOW_KEY = 'indexnowkey12345'; // Apni indexnowapi.txt file ke andar jo text rakha hai woh yahan daal dein
+const DOMAIN = 'https://redirects.pageaura.xyz';
+const HOST = 'redirects.pageaura.xyz';
+const INDEXNOW_KEY = 'indexnowkey12345'; // Apni indexnowapi.txt file ke andar wali key yahan rakhein
 const KEY_FILENAME = 'indexnowapi.txt';
 
 const destFile = path.join(__dirname, 'destinations.txt');
