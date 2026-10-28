@@ -1,17 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
 
 const DOMAIN = 'https://sparkflare95.github.io/ZeroDowntime';
-const HOST = 'sparkflare95.github.io'; 
-const INDEXNOW_KEY = 'YOUR_INDEXNOW_KEY_HERE'; // Yahan apni IndexNow key likh dein (agar key nahi hai toh koi bhi random text daal dein)
-
 const destFile = path.join(__dirname, 'destinations.txt');
-const publicDir = path.join(__dirname, 'public');
-
-if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-}
 
 function generateRandomString(length = 9) {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -40,7 +31,7 @@ const now = new Date().toISOString();
 
 destinations.forEach(targetUrl => {
     const randomSlug = generateRandomString(9);
-    const folderPath = path.join(publicDir, randomSlug);
+    const folderPath = path.join(__dirname, randomSlug);
     
     fs.mkdirSync(folderPath, { recursive: true });
 
@@ -77,37 +68,5 @@ generatedUrls.forEach(url => {
 
 sitemapXML += `</urlset>`;
 
-fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXML, 'utf8');
+fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXML, 'utf8');
 console.log(`Successfully generated ${generatedUrls.length} redirect pages and sitemap.xml`);
-
-const payload = JSON.stringify({
-    host: HOST,
-    key: INDEXNOW_KEY,
-    keyLocation: `https://${HOST}/ZeroDowntime/${INDEXNOW_KEY}.txt`,
-    urlList: generatedUrls
-});
-
-const options = {
-    hostname: 'api.indexnow.org',
-    port: 443,
-    path: '/indexnow',
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-    }
-};
-
-const req = https.request(options, (res) => {
-    console.log(`IndexNow statusCode: ${res.statusCode}`);
-    res.on('data', (d) => {
-        process.stdout.write(d);
-    });
-});
-
-req.on('error', (error) => {
-    console.error('IndexNow Error:', error);
-});
-
-req.write(payload);
-req.end();
