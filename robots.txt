@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sparkflare95.github.io/ZeroDowntime/sitemap.xml
